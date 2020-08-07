@@ -4,6 +4,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var ffmpeg = require('ffmpeg');
+var childProcess = require('child_process');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -13,9 +14,35 @@ var upload = multer({ dest: 'uploads/' })
 
 var app = express();
 
+function runScript(req, callback) {
+
+  // keep track of whether callback has been invoked to prevent multiple invocations
+  var invoked = false;
+
+  var process = childProcess.fork('squish.js', ['filename', '-f', `${req.file.filename}`]);
+
+  // listen for errors as they may prevent the exit event from firing
+  process.on('error', function (err) {
+      if (invoked) return;
+      invoked = true;
+      callback(err);
+  });
+
+  // execute the callback once the process has finished running
+  process.on('exit', function (code) {
+      if (invoked) return;
+      invoked = true;
+      var err = code === 0 ? null : new Error('exit code ' + code);
+      callback(err);
+  });
+
+}
+
 app.post('/upload', upload.single('file'), function (req, res, next) {
-  // req.file is the `avatar` file
-  // req.body will hold the text fields, if there were any
+  runScript(req, function (err) {
+    if (err) throw err;
+    console.log('finished squishing!');
+});
 })
 
 // view engine setup

@@ -1,12 +1,25 @@
 var ffmpeg = require('ffmpeg');
+const yargs = require('yargs');
+
+const argv = yargs
+    .command('filename', 'input file name', {
+        file: {
+            alias: 'f',
+            type: 'string',
+        }
+    })
+    .argv;
+
+const file = argv.file
+console.log(file)
 
 try {
-	var process = new ffmpeg('/home/kyle/Documents/bruh/shirttoss.mov');
+	var process = new ffmpeg(`uploads/${file}`);
 	process.then(function (video) {
 		video.addCommand('-vf', 'scale=iw/2:ih,setsar=1')
-		video.save('/home/kyle/Documents/bruh/squished.mov', function (error, file) {
+		video.save('squished.mp4', function (error, file) {
 			if (!error)
-				console.log('Video file: ' + file);
+				console.log('file: ' + file);
 		});
 
 	}, function (err) {
