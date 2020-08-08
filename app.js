@@ -10,7 +10,7 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
 var multer  = require('multer')
-var upload = multer({ dest: 'public/images/uploads/' })
+var upload = multer({ dest: 'public/images/uploads/', limits: { fileSize: 15000000}})
 
 var app = express();
 
@@ -19,7 +19,7 @@ function runScript(req, callback) {
   // keep track of whether callback has been invoked to prevent multiple invocations
   var invoked = false;
 
-  var process = childProcess.fork('squish.js', ['filename', '-f', `${req.file.filename}`]);
+  var process = childProcess.fork('squish.js', [`--file=${req.file.filename}`, `--type=${req.file.mimetype}`]);
 
   // listen for errors as they may prevent the exit event from firing
   process.on('error', function (err) {
@@ -42,7 +42,20 @@ app.post('/upload', upload.single('file'), function (req, res, next) {
   runScript(req, function (err) {
     if (err) throw err;
     console.log('finished squishing!');
-    res.redirect(`/images/squished/${req.file.filename}.mp4`)
+    var type = req.file.mimetype
+    if (type == 'image/jpeg') {
+      filetype = 'jpg'
+    }
+    if (type == 'image/png') {
+      filetype = 'png'
+    }
+    if (type == 'image/gif') {
+      filetype = 'gif'
+    }
+    if (type == 'video/quicktime') {
+      filetype = 'mov'
+    }
+    res.redirect(`/images/squished/${req.file.filename}.${filetype}`)
 });
 })
 

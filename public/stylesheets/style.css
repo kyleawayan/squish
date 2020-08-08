@@ -1,6 +1,30 @@
+@font-face {
+  src: url('fonts/FormaDJRBanner-Bold.eot'); /* IE < 9 */
+  src: url('fonts/FormaDJRBanner-Bold.eot?#') format("embedded-opentype"), /* IE 9 */
+       url('fonts/FormaDJRBanner-Bold.woff2') format("woff2"),
+       url('fonts/FormaDJRBanner-Bold.woff') format("woff");
+  font-family: 'FormaDJRBanner';
+  font-style: normal;
+  font-weight: bold;
+  }
+
+@font-face {
+  src: url('fonts/FormaDJRMicro-Regular.eot'); /* IE < 9 */
+  src: url('fonts/FormaDJRMicro-Regular.eot?#') format("embedded-opentype"), /* IE 9 */
+        url('fonts/FormaDJRMicro-Regular.woff2') format("woff2"),
+        url('fonts/FormaDJRMicro-Regular.woff') format("woff");
+  font-family: 'FormaDJRMicro';
+  font-style: normal;
+  font-weight: normal;
+  }
+
 body {
   padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  font: 14px "FormaDJRMicro"
+}
+
+h1 {
+  font: 30px "FormaDJRBanner"
 }
 
 a {
